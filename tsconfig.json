@@ -1,0 +1,3 @@
+{
+    "extends": "@linktree/tsconfig/base.json"
+}

@@ -1,0 +1,27 @@
+{
+  "name": "@linktree/db",
+  "version": "0.0.0",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema/index.ts",
+    "./enums": "./src/enums/index.ts"
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "tsup"
+  },
+  "dependencies": {
+    "@linktree/env": "workspace:*",
+    "drizzle-orm": "^0.44.5",
+    "drizzle-zod": "^0.8.3",
+    "postgres": "^3.4.7",
+    "tsup": "^8.5.1"
+  },
+  "types": "dis/index.d.ts",
+  "devDependencies": {
+    "@linktree/typescript-config": "*"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "@linktree/env",
+  "version": "0.0.0",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    "./server": "./server.ts",
+    "./client": "./client.ts"
+  },
+  "license": "MIT",
+  "scripts": {},
+  "dependencies": {
+    "drizzle-orm": "^0.44.5",
+    "postgres": "^3.4.7"
+  },
+  "devDependencies": {
+    "@linktree/typescript-config": "*"
+  }
+}
