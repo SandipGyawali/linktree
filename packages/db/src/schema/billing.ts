@@ -2,11 +2,12 @@ import { index } from "drizzle-orm/pg-core";
 import { createTable } from "../helpers/create-table";
 import { subscriptionsTable } from "./subscription";
 import { usersTable } from "./users";
+import { randomUUID } from "node:crypto"
 
 export const billingEventsTable = createTable(
   "billing_events",
   (t) => ({
-    event_id: t.uuid().$defaultFn(Bun.randomUUIDv7).primaryKey(),
+    event_id: t.uuid().$defaultFn(() => randomUUID()).primaryKey(),
 
     user_id: t
       .uuid()

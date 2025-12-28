@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { Drizzle } from "src/common/drizzle/decorators/drizzle.decorator";
-import { usersTable } from "@linktree/db/schema";
+import { usersTable } from "@linktree/db";
 import { eq } from "drizzle-orm";
 import { hashPassword } from "../auth/utils/password";
 import { User } from "./user.interface";

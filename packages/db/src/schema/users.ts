@@ -1,8 +1,9 @@
 import { index } from "drizzle-orm/pg-core";
 import { createTable } from "../helpers/create-table";
+import { randomUUID } from "node:crypto";
 
 export const usersTable = createTable("users", (t) => ({
-  user_id: t.uuid().$defaultFn(Bun.randomUUIDv7).primaryKey(),
+  user_id: t.uuid().$defaultFn(() => randomUUID()).primaryKey(),
   username: t.text().notNull().unique(),
 
   email: t.text().notNull().unique(),

@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { RedisModule } from './modules/redis/redis.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { UserModule } from './modules/users/user.module';
 import path from 'node:path';
 
 @Module({
@@ -13,7 +14,8 @@ import path from 'node:path';
       envFilePath: path.resolve(__dirname, "../../../.env") 
     }),
     RedisModule,
-    AuthModule
+    AuthModule,
+    UserModule
   ],
   controllers: [AppController],
   providers: [AppService],

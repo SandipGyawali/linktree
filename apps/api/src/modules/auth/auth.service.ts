@@ -12,7 +12,6 @@ import { UserService } from "../users/user.service";
 export class AuthService {
   constructor(
     @Drizzle() private readonly db: NodePgDatabase,
-    private readonly logger: Logger,
     private userService: UserService
   ) {}
 
@@ -50,7 +49,7 @@ export class AuthService {
 
       return { message: "Password Changed Successfully" };  
     }catch(err) {
-      this.logger.error(err);
+      console.error(err);
       throw new InternalServerErrorException(err ??"Error while changing user password")
     }
   }

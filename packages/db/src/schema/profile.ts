@@ -1,11 +1,12 @@
 import { index } from "drizzle-orm/pg-core";
 import { createTable } from "../helpers/create-table";
 import { usersTable } from "./users";
+import { randomUUID } from "node:crypto";
 
 export const profileViewsTable = createTable(
   "profile_views",
   (t) => ({
-    view_id: t.uuid().$defaultFn(Bun.randomUUIDv7).primaryKey(),
+    view_id: t.uuid().$defaultFn(() => randomUUID()).primaryKey(),
 
     user_id: t
       .uuid()

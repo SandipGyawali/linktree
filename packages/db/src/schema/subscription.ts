@@ -1,11 +1,12 @@
 import { index } from "drizzle-orm/pg-core";
 import { createTable } from "../helpers/create-table";
 import { usersTable } from "./users";
+import { randomUUID } from "node:crypto";
 
 export const subscriptionPlansTable = createTable(
   "subscription_plans",
   (t) => ({
-    plan_id: t.uuid().$defaultFn(Bun.randomUUIDv7).primaryKey(),
+    plan_id: t.uuid().$defaultFn(() => randomUUID()).primaryKey(),
 
     name: t.text().notNull().unique(), // e.g., "Premium"
     description: t.text(),
@@ -26,7 +27,7 @@ export const subscriptionPlansTable = createTable(
 export const subscriptionsTable = createTable(
   "subscriptions",
   (t) => ({
-    subscription_id: t.uuid().$defaultFn(Bun.randomUUIDv7).primaryKey(),
+    subscription_id: t.uuid().$defaultFn(() => randomUUID()).primaryKey(),
 
     user_id: t
       .uuid()

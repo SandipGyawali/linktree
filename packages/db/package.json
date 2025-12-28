@@ -1,17 +1,29 @@
 {
   "name": "@linktree/db",
   "version": "0.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "exports": {
-    ".": "./src/index.ts",
-    "./schema": "./src/schema/index.ts",
-    "./enums": "./src/enums/index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./schema": {
+      "types": "./dist/schema/index.d.ts",
+      "default": "./dist/schema/index.js"
+    },
+    "./enums": {
+      "types": "./dist/enums/index.d.ts",
+      "default": "./dist/enums/index.js"
+    }
   },
   "license": "MIT",
   "scripts": {
-    "build": "tsup"
+    "build": "tsup",
+    "dev": "tsup"
   },
   "dependencies": {
     "@linktree/env": "workspace:*",
@@ -20,7 +32,6 @@
     "postgres": "^3.4.7",
     "tsup": "^8.5.1"
   },
-  "types": "dis/index.d.ts",
   "devDependencies": {
     "@linktree/typescript-config": "*"
   }
