@@ -2,13 +2,16 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import helmet from 'helmet';
 import cors from 'cors';
-import express, { Response } from 'express';
+import express from 'express';
 import { registerRoutes } from 'routes';
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { ENV } from 'config/env';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   try {
     const app = await NestFactory.create(AppModule);
-    const GATEWAY_PORT = 3001;
+    const GATEWAY_PORT = ENV.GATEWAY_PORT;
 
     app.use(helmet());
     app.use(
@@ -20,17 +23,29 @@ async function bootstrap() {
   
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
-    
+
+    app.useGlobalPipes(new ValidationPipe());
+
+    app.setGlobalPrefix("api");
     registerRoutes(app);
 
-    app.use((req, res: Response) => {
-      res.status(404).json({ message: "Not Found" });
-    });
-  
-    await app.listen(GATEWAY_PORT, () => {
+    const options = new DocumentBuilder()
+      .setTitle("API Docs")
+      .addBearerAuth({
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT"
+      }, "authorization")
+      .addTag("auth")
+      .setVersion("1.0")
+      .build();
+        
+    const documentFactory = () => SwaggerModule.createDocument(app, options);
+    SwaggerModule.setup("docs", app, documentFactory);
+
+    await app.listen(Number(GATEWAY_PORT), () => {
       console.log(`ApiGateway Server Listening on PORT=${GATEWAY_PORT}`)
     });
-
 
     const shutDown = () => {
       Promise.all([])

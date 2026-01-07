@@ -4,7 +4,8 @@ import z from "zod";
 
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "production"]).default("development"),
-  GATEWAY_PORT: z.coerce.number().int().max(65_535).min(3000)
+  GATEWAY_PORT: z.coerce.number().int().max(65_535).min(3000),
+  AMQP_URI: z.url()
 });
 
 
