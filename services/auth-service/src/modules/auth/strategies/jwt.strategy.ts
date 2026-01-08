@@ -1,16 +1,16 @@
 import { Inject, Injectable, OnModuleInit } from "@nestjs/common";
 import Redis from "ioredis";
 import { IORedisKey } from "src/constants/redis.constants";
-import { createPrivateKey, generateKeyPairSync, KeyObject } from "crypto"
+import { createPrivateKey, generateKeyPairSync, KeyObject, randomBytes } from "crypto"
 import { exportJWK, importJWK, jwtVerify, SignJWT } from "jose"
 
 interface JwtPayload {
   sub: string;
   email: string;
   isActive: boolean;
-  lastLoginAt: Date;
+  lastLoginAt: Date | null;
   createdAt: Date;
-  updatedAt: Date;
+  updatedAt: Date | null;
 }
 
 interface StoredJWK {
@@ -125,6 +125,18 @@ export class JwtStrategy implements OnModuleInit {
     );
 
     return payload as unknown as JwtPayload;
+  }
+
+
+  async signRefreshToken(userId: string): Promise<string> {
+    const token = randomBytes(64).toString("hex");
+    await this.redisClient.set(
+      `refresh_tokens:${token}`,
+      userId,
+      "EX",
+      "3d"
+    );
+    return token;
   }
 
   async verifyRefreshToken(token: string): Promise<string | null> {

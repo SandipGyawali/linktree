@@ -1,7 +1,7 @@
 import { createTable } from "../helpers/create-table";
 
 export const adminSchema = createTable("admins", (t) => ({
-  adminId: t.uuid("admin_id").$defaultFn(crypto.randomUUID).primaryKey(),
+  userId: t.uuid("admin_id").$defaultFn(crypto.randomUUID).primaryKey(),
   
   email: t.varchar("email", { length: 255 }).notNull().unique(),
   hash: t.text("hash").notNull(),
