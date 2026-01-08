@@ -10,10 +10,23 @@
     "db:push": "bunx --bun drizzle-kit generate && bunx --bun drizzle-kit migrate"
   },
   "devDependencies": {
+    "@nestjs/cli": "^11.0.0",
+    "@nestjs/common": "^11.1.11",
+    "@nestjs/config": "^4.0.2",
+    "@nestjs/core": "^11.0.1",
+    "@nestjs/microservices": "^11.1.11",
+    "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/schematics": "^11.0.0",
+    "@nestjs/swagger": "^11.2.4",
+    "@nestjs/testing": "^11.0.1",
+    "@types/pg": "^8.16.0",
+    "class-validator": "^0.14.3",
+    "ioredis": "^5.9.0",
+    "drizzle-kit": "^0.31.8",
     "prettier": "^3.6.2",
+    "reflect-metadata": "^0.2.2",
     "turbo": "^2.6.1",
-    "typescript": "5.9.2",
-    "drizzle-kit": "^0.31.7"
+    "typescript": "5.9.2"
   },
   "engines": {
     "node": ">=18"
@@ -23,5 +36,9 @@
     "apps/*",
     "packages/*",
     "services/*"
-  ]
+  ],
+  "dependencies": {
+    "drizzle-orm": "^0.45.1",
+    "pg": "^8.16.3"
+  }
 }

@@ -3,7 +3,6 @@ import { AppModule } from './app.module';
 import helmet from 'helmet';
 import cors from 'cors';
 import express from 'express';
-import { registerRoutes } from 'routes';
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { ENV } from 'config/env';
 import { ValidationPipe } from '@nestjs/common';
@@ -27,7 +26,6 @@ async function bootstrap() {
     app.useGlobalPipes(new ValidationPipe());
 
     app.setGlobalPrefix("api");
-    registerRoutes(app);
 
     const options = new DocumentBuilder()
       .setTitle("API Docs")
