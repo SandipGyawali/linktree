@@ -1,6 +1,6 @@
 import { createTable } from "../helpers/create-table";
 
-export const userSchema = createTable("admins", (t) => ({
+export const userSchema = createTable("users", (t) => ({
   userId: t.uuid("user_id").$defaultFn(crypto.randomUUID).primaryKey(),
   
   username: t.text().notNull().unique(),

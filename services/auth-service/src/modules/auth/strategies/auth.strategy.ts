@@ -1,9 +1,9 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { adminSchema } from "src/drizzle/schema";
-import { userSchema } from "src/drizzle/schema/user_schema";
+import { userSchema } from "src/drizzle/schema/user.schema";
 import type { UserType } from "../../../drizzle/helpers/types";
 import { and, eq } from "drizzle-orm";
-import { DRIZZLE } from "../../database/database.module";
+import { DRIZZLE } from "src/constants/drizzle.constants";
 import type { Database } from "src/drizzle/type";
 import bcrypt from "bcryptjs";
 import { JwtStrategy } from "./jwt.strategy";
@@ -24,11 +24,12 @@ export class AuthStrategy<T extends UserType> {
     this.type = type;
   }
 
+  
   async login(
     email: string,
     password: string,
-    issuer: string,
-    audience: string,
+    // issuer: string = "http://localhost:3001",
+    // audience: string = "http://localhost:3001",
   ) {
     // retrieves the 
     const schema = AuthStrategy.SCHEMA_MAP[this.type];
@@ -57,8 +58,8 @@ export class AuthStrategy<T extends UserType> {
         updatedAt: _user.updatedAt,
         sub: _user.userId
       },
-      issuer,
-      audience
+      // issuer,
+      // audience
     );
 
     const refreshToken = await this.jwtStrategy.signRefreshToken(_user.userId);

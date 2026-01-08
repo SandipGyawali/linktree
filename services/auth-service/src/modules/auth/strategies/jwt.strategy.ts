@@ -2,7 +2,6 @@ import { Inject, Injectable, OnModuleInit } from "@nestjs/common";
 import Redis from "ioredis";
 import { IORedisKey } from "src/constants/redis.constants";
 import { createPrivateKey, generateKeyPairSync, KeyObject, randomBytes } from "crypto"
-import { exportJWK, importJWK, jwtVerify, SignJWT } from "jose"
 
 interface JwtPayload {
   sub: string;
@@ -46,13 +45,14 @@ export class JwtStrategy implements OnModuleInit {
 
 
   async rotateKeys() {
+    const jose = await import("jose");
     const { publicKey, privateKey } = generateKeyPairSync("rsa", {
       modulusLength: 2048,
     });
 
     const kid = crypto.randomUUID();
 
-    const jwk = await exportJWK(publicKey);
+    const jwk = await jose.exportJWK(publicKey);
     jwk.kid = kid;
     jwk.alg = "RSA256";
     jwk.use = "sig";
@@ -88,22 +88,24 @@ export class JwtStrategy implements OnModuleInit {
 
   async signAccessToken(
     payload: JwtPayload,
-    issuer: string,
-    audience: string,
+    // issuer: string,
+    // audience: string,
   ): Promise<string> {
+    const jose = await import("jose");
     if(!this.currentKeyId) throw new Error("No current key available");
     const privateKey = await this.getPrivateKey();
-    return await new SignJWT(payload as any)
+    return await new jose.SignJWT(payload as any)
       .setProtectedHeader({ alg: "RS256", kid: this.currentKeyId })
       .setIssuedAt()
-      .setIssuer(issuer)
-      .setAudience(audience)
+      // .setIssuer(issuer)
+      // .setAudience(audience)
       .setExpirationTime("10m")
       .sign(privateKey);
   }
 
 
   async verifyAccessToken(token: string, issuer: string, audience: string) {
+    const jose = await import("jose");
     const jwks = await this.getJWKS();
 
     const jwkStore = new Map<string, any>();
@@ -111,12 +113,12 @@ export class JwtStrategy implements OnModuleInit {
       jwkStore.set(kid, jwk)
     }
 
-    const { payload } = await jwtVerify(token,
+    const { payload } = await jose.jwtVerify(token,
       async (header) => {
          const jwk = jwkStore.get(header.kid!);
          if(!jwk) 
            throw new Error("Unknown Key ID");
-         return await importJWK(jwk, "RS256");
+         return await jose.importJWK(jwk, "RS256");
       },
       {
         issuer: issuer,

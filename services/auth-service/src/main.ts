@@ -10,7 +10,7 @@ async function bootstrap() {
       transport: Transport.RMQ,
       options: {
         urls: [ENV.AMQP_URI],
-        queue: 'mail.transactional.queue',
+        queue: 'auth.transactional.queue',
         prefetchCount: 2,
         queueOptions: { durable: true },
       },

@@ -9,10 +9,10 @@ export class AuthController {
     private readonly authService: AuthService
   ) {}
   
-  @MessagePattern({ cmd: "login" })
+  @MessagePattern("user_login")
   async login(@Payload() dto: LoginDto) {
-    console.log(dto);
-    return this.authService.login()
+    const response = this.authService.login(dto);
+    return response;
   }
 
   @MessagePattern({ cmd: "loginAdmin" }) 

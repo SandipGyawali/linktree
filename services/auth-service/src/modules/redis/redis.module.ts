@@ -19,6 +19,7 @@ import { Redis } from "ioredis";
       inject: [ConfigService]
     },
   ],
+  exports: [IORedisKey]
 })
 export class RedisModule implements OnApplicationShutdown {
   constructor(private readonly moduleRef: ModuleRef) {}
