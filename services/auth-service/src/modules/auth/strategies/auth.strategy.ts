@@ -29,7 +29,6 @@ export class AuthStrategy<T extends UserType> {
   ) {
     this.type = type;
   }
-
   
   async login(
     email: string,
@@ -106,13 +105,9 @@ export class AuthStrategy<T extends UserType> {
 
     const hash = await bcrypt.hash(password, 13);
 
-    const newUserPayload = {
-      
-    }
-
     const [newUser] = await this.db.insert(schema).values({
       ...{
-        username: name,
+        fullName: name,
         email,
         hash,
       }

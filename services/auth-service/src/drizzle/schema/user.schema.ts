@@ -3,7 +3,7 @@ import { createTable } from "../helpers/create-table";
 export const userSchema = createTable("users", (t) => ({
   userId: t.uuid("user_id").$defaultFn(() => crypto.randomUUID()).primaryKey(),
   
-  username: t.text().notNull(),
+  fullName: t.text("full_name").notNull(),
   email: t.varchar("email", { length: 255 }).notNull().unique(),
   hash: t.text("hash").notNull(),
 
