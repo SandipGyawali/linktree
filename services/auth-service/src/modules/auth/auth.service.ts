@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { JwtStrategy } from "./strategies/jwt.strategy";
+import { JwtPayload, JwtStrategy } from "./strategies/jwt.strategy";
 import { AdminAuthStrategy } from "./strategies/admin.auth.strategy";
 import { UserAuthStrategy } from "./strategies/user.auth.strategy";
 import { LoginDto } from "./dto/login_dto";
@@ -32,4 +32,35 @@ export class AuthService {
 
   async loginAdmin() {}
   async signupAdmin() {}
+
+  async validateAccessToken(input): Promise<{
+    success: boolean;
+    payload: JwtPayload | null
+  }> {
+    try {
+      const payload = await this.jwtStrategy.verifyAccessToken(input);
+      if(!payload) throw new Error("Validation Error");
+      
+      return {
+        success: true,
+        payload,
+      }
+    }catch(err) {
+      return {
+        success: false,
+        payload: null
+      }
+    }    
+  }
+
+  async validateRefreshToken({ refreshToken }) {
+    try {
+      const payload = await this.jwtStrategy.verifyRefreshToken(refreshToken);
+      if (!payload) throw new Error('Invalid');
+
+      return { success: true };
+    } catch (err) {
+      return { success: false };
+    }
+  }
 }

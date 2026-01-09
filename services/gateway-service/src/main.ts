@@ -30,11 +30,16 @@ async function bootstrap() {
     
     const options = new DocumentBuilder()
       .setTitle("API Docs")
-      .addBearerAuth({
-        type: "http",
-        scheme: "bearer",
-        bearerFormat: "JWT"
-      }, "authorization")
+      .addBearerAuth(
+        {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+          name: "authorization",
+          in: "header"
+        }, 
+        "access-token"
+      )
       .addTag("auth")
       .setVersion("1.0")
       .build();

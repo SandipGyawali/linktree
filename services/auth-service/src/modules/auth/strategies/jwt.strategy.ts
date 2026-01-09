@@ -3,7 +3,7 @@ import Redis from "ioredis";
 import { IORedisKey } from "src/constants/redis.constants";
 import { createPrivateKey, generateKeyPairSync, KeyObject, randomBytes } from "crypto"
 
-interface JwtPayload {
+export interface JwtPayload {
   sub: string;
   email: string;
   isActive: boolean;
@@ -104,7 +104,11 @@ export class JwtStrategy implements OnModuleInit {
   }
 
 
-  async verifyAccessToken(token: string, issuer: string, audience: string) {
+  async verifyAccessToken(
+    token: string,
+    // issuer: string, 
+    // audience: string
+  ) {
     const jose = await import("jose");
     const jwks = await this.getJWKS();
 
@@ -120,10 +124,10 @@ export class JwtStrategy implements OnModuleInit {
            throw new Error("Unknown Key ID");
          return await jose.importJWK(jwk, "RS256");
       },
-      {
-        issuer: issuer,
-        audience: audience,
-      }
+      // {
+      //   issuer: issuer,
+      //   audience: audience,
+      // }
     );
 
     return payload as unknown as JwtPayload;

@@ -1,9 +1,10 @@
-import { Body, Controller, GatewayTimeoutException, Inject, Post } from "@nestjs/common";
+import { Body, Controller, GatewayTimeoutException, Get, Inject, Post, UseGuards } from "@nestjs/common";
 import { LoginDto } from "./dto/login_dto";
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { ClientProxy } from "@nestjs/microservices";
 import { catchError, firstValueFrom, timeout, TimeoutError } from "rxjs";
 import { SignupDto } from "./dto/signup_dto";
+import { AuthGuard } from "./guards/auth.guard";
 
 @ApiTags("Authentication")
 @Controller("auth")
@@ -43,5 +44,14 @@ export class AuthController {
     const response = await firstValueFrom(this.authClient.send("user_signup", body));
     console.log(response);
     return response;
+  }
+
+
+  @Get("profile")
+  @ApiOperation({ summary: "Get Profile" })
+  @ApiResponse({ status: 201, description: "User Profile" })
+  @UseGuards(AuthGuard)
+  getProfile() {
+    return { message: 'This is profile data!' };
   }
 }

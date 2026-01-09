@@ -22,4 +22,21 @@ export class AuthController {
     const response = this.authService.signup(dto);
     return response;
   }
+
+
+  @MessagePattern("validate_access_token")
+  async validateAccessToken(@Payload() data) {
+    const { accessToken } = data;
+
+    const response = await this.authService.validateAccessToken(accessToken);
+    return response;
+  }
+
+  @MessagePattern("validate_refresh_token")
+  async validateRefreshToken(@Payload() data) {
+    const { refreshToken, accessToken } = data;
+    const response = await this.authService.validateRefreshToken({ refreshToken });
+    
+    return response;
+  }
 }
