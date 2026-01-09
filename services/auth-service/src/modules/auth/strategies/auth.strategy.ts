@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { adminSchema } from "src/drizzle/schema";
 import { userSchema } from "src/drizzle/schema/user.schema";
 import type { UserType } from "../../../drizzle/helpers/types";
@@ -7,6 +7,10 @@ import { DRIZZLE } from "src/constants/drizzle.constants";
 import type { Database } from "src/drizzle/type";
 import bcrypt from "bcryptjs";
 import { JwtStrategy } from "./jwt.strategy";
+import { ClientProxy, RpcException } from "@nestjs/microservices";
+import { IORedisKey } from "src/constants/redis.constants";
+import Redis from "ioredis";
+import { randomUUID } from "node:crypto";
 
 @Injectable()
 export class AuthStrategy<T extends UserType> {
@@ -18,7 +22,9 @@ export class AuthStrategy<T extends UserType> {
 
   constructor(
     @Inject(DRIZZLE) private readonly db: Database,
-    @Inject() private readonly jwtStrategy: JwtStrategy,
+    @Inject("MAIL_SERVICE") private readonly mailClient: ClientProxy,
+    @Inject(IORedisKey) private readonly redisClient: Redis,
+    private readonly jwtStrategy: JwtStrategy,
     type: T,
   ) {
     this.type = type;
@@ -45,10 +51,18 @@ export class AuthStrategy<T extends UserType> {
       .limit(1);
 
     if(!_user) 
-      return { error: "user_not_found" } as const;
+      throw new RpcException({
+        message: `User with email: ${email} not found`,
+        code: "USER_NOT_FOUND",
+        statusCode: HttpStatus.NOT_FOUND
+      });
 
     if(!(await bcrypt.compare(password, _user.hash))) 
-      return { error: "invalid_password" } as const;
+      throw new RpcException({
+        message: `Invalid Password Provided`,
+        code: "INVALID_PASSWORD",
+        statusCode: HttpStatus.BAD_REQUEST
+      })
 
     const accessToken = await this.jwtStrategy.signAccessToken({
         email: _user.email,
@@ -76,8 +90,79 @@ export class AuthStrategy<T extends UserType> {
     }
   }
 
-  async signup() {}
+  async signup(name: string, email: string, password: string) {
+    const schema = AuthStrategy.SCHEMA_MAP[this.type];
+    
+    const existingUser = await this.db.query.userSchema.findFirst({
+      where: (fields) => eq(fields.email, email)  
+    });
 
+    if(existingUser) 
+      throw new RpcException({
+        message: `User with email: ${email} already exists`,
+        code: "USER_ALREADY_EXISTS",
+        statusCode: HttpStatus.CONFLICT
+      });
+
+    const hash = await bcrypt.hash(password, 13);
+
+    const newUserPayload = {
+      
+    }
+
+    const [newUser] = await this.db.insert(schema).values({
+      ...{
+        username: name,
+        email,
+        hash,
+      }
+    }).returning();
+
+    if(!newUser) 
+      throw new RpcException({
+        message: `Error while creating a new User`,
+        code: "INTERNAL_SERVER_ERROR",
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR
+      });
+
+    const token = randomUUID();
+    console.log(token);
+    const otp = this.generateRandomNumber(0, 9999);
+
+    await this.redisClient.set(
+      token, 
+      JSON.stringify({ otp, input: { name, email }}),
+      "EX", 
+      900_000
+    );
+
+    const emailPayload = {
+      "to": newUser.email,
+      "subject": "Account OTP Verification",
+      "body": "This is a test email message sent",
+      "key": "CreateUserAccountOTPTemplate",
+      "props": {
+        "full_name": name,
+        "otp": otp
+      }
+    }
+
+    this.mailClient.emit("mail.transactional", emailPayload);
+
+    return {
+      userId: newUser.userId,
+      email: newUser.email,
+      isActive: newUser.isActive,
+      createdAt: newUser.createdAt
+    };
+  }
 
   logout() {}
+
+  generateRandomNumber(min: number, max: number): number {
+    if (min > max) {
+      throw new Error("min cannot be greater than max");
+    }
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
 }

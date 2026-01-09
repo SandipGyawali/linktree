@@ -6,6 +6,7 @@ import express from 'express';
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { ENV } from 'config/env';
 import { ValidationPipe } from '@nestjs/common';
+import { RpcToHttpExceptionFilter } from './errors/rpc-to-http.exception';
 
 async function bootstrap() {
   try {
@@ -24,9 +25,9 @@ async function bootstrap() {
     app.use(express.urlencoded({ extended: true }));
 
     app.useGlobalPipes(new ValidationPipe());
-
+    app.useGlobalFilters(new RpcToHttpExceptionFilter())
     app.setGlobalPrefix("api");
-
+    
     const options = new DocumentBuilder()
       .setTitle("API Docs")
       .addBearerAuth({

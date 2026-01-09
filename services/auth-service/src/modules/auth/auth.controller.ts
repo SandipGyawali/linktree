@@ -2,6 +2,7 @@ import { Controller } from "@nestjs/common";
 import { LoginDto } from "./dto/login_dto";
 import { AuthService } from "./auth.service";
 import { MessagePattern, Payload } from "@nestjs/microservices";
+import { SignupDto } from "./dto/signup_dto";
 
 @Controller()
 export class AuthController {
@@ -11,13 +12,14 @@ export class AuthController {
   
   @MessagePattern("user_login")
   async login(@Payload() dto: LoginDto) {
-    const response = this.authService.login(dto);
+    console.log(dto);
+    const response = this.authService.login(dto);     
     return response;
   }
 
-  @MessagePattern({ cmd: "loginAdmin" }) 
-  async loginAdmin(@Payload() dto: LoginDto) {
-    console.log(dto)
-    return this.authService.loginAdmin();
+  @MessagePattern("user_signup") 
+  async loginAdmin(@Payload() dto: SignupDto) {
+    const response = this.authService.signup(dto);
+    return response;
   }
 }

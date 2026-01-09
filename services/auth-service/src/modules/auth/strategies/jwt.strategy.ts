@@ -136,7 +136,7 @@ export class JwtStrategy implements OnModuleInit {
       `refresh_tokens:${token}`,
       userId,
       "EX",
-      "3d"
+      3 * 24 * 60 * 60 // 3day -> ms
     );
     return token;
   }

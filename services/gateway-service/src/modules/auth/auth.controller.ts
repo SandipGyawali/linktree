@@ -1,8 +1,9 @@
-import { Body, Controller, Inject, Post } from "@nestjs/common";
+import { Body, Controller, GatewayTimeoutException, Inject, Post } from "@nestjs/common";
 import { LoginDto } from "./dto/login_dto";
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { ClientProxy } from "@nestjs/microservices";
-import { firstValueFrom } from "rxjs";
+import { catchError, firstValueFrom, timeout, TimeoutError } from "rxjs";
+import { SignupDto } from "./dto/signup_dto";
 
 @ApiTags("Authentication")
 @Controller("auth")
@@ -17,9 +18,30 @@ export class AuthController {
   @ApiResponse({ status: 400, description: "Invalid Login Request Body" })
   @ApiBody({ type: LoginDto })
   async login(@Body() body: LoginDto) {
-    const response = await firstValueFrom(this.authClient.send("user_login", body));
+    const response = await firstValueFrom(this.authClient.send("user_login", body).pipe(
+      timeout(3000),
+      catchError(err => {
+        if(err instanceof TimeoutError) {
+          throw new GatewayTimeoutException("Authentication Service is Unavailable!")
+        }
+        throw err;
+      })
+    ));
 
     console.log(response)
+    return response;
+  }
+
+
+  @Post("signup")
+  @ApiOperation({ summary: "User Signup API" })
+  @ApiResponse({ status: 201, description: "User successfully created" })
+  @ApiResponse({ status: 400, description: "Invalid signup request" })
+  @ApiResponse({ status: 409, description: "User already exists" })
+  @ApiBody({ type: SignupDto, description: "Signup request payload" })
+  async signup(@Body() body: SignupDto) {
+    const response = await firstValueFrom(this.authClient.send("user_signup", body));
+    console.log(response);
     return response;
   }
 }

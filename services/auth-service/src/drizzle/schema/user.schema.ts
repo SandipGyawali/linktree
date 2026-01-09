@@ -1,9 +1,9 @@
 import { createTable } from "../helpers/create-table";
 
 export const userSchema = createTable("users", (t) => ({
-  userId: t.uuid("user_id").$defaultFn(crypto.randomUUID).primaryKey(),
+  userId: t.uuid("user_id").$defaultFn(() => crypto.randomUUID()).primaryKey(),
   
-  username: t.text().notNull().unique(),
+  username: t.text().notNull(),
   email: t.varchar("email", { length: 255 }).notNull().unique(),
   hash: t.text("hash").notNull(),
 

@@ -13,8 +13,8 @@ import { ENV } from "config/env";
           urls: [ENV.AMQP_URI],
           queue: "auth.transactional.queue",
           queueOptions: {
-            durable: true
-          }
+            durable: true,
+          },
         }
       }
     ])

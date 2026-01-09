@@ -5,9 +5,10 @@ import { AuthController } from "./auth.controller";
 import { UserAuthStrategy } from "./strategies/user.auth.strategy";
 import { AdminAuthStrategy } from "./strategies/admin.auth.strategy";
 import { DatabaseModule } from "../database/database.module";
+import { RedisModule } from "../redis/redis.module";
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, RedisModule],
   providers: [
     JwtStrategy,   
     UserAuthStrategy,

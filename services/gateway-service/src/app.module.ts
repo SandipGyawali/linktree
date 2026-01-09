@@ -9,7 +9,7 @@ import { AuthModule } from './modules/auth/auth.module';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ".env"
-    }),
+    }), 
     EmailModule,
     AuthModule
   ],

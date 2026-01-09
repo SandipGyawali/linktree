@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { DatabaseModule } from './modules/database/database.module';
 import { ConfigModule } from '@nestjs/config';
 import { RedisModule } from './modules/redis/redis.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { MailModule } from './modules/email/email.module';
 
 @Module({
   imports: [
@@ -14,9 +13,8 @@ import { AuthModule } from './modules/auth/auth.module';
     }),
     DatabaseModule,
     RedisModule,
-    AuthModule
+    AuthModule,
+    MailModule
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
