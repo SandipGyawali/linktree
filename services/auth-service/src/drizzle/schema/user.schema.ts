@@ -7,6 +7,7 @@ export const userSchema = createTable("users", (t) => ({
   email: t.varchar("email", { length: 255 }).notNull().unique(),
   hash: t.text("hash").notNull(),
 
+  isEmailVerified: t.boolean("is_email_verified").notNull().default(false),
   isActive: t.boolean("is_active").default(true).notNull(),
 
   lastLoginAt: t.timestamp("last_login_at").$onUpdateFn(() => new Date()),

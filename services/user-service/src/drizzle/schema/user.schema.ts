@@ -5,7 +5,7 @@ export const userSchema = createTable("users", (t) => ({
   
   username: t.text("username").notNull().unique(),
   bio: t.text("bio"),
-  avatarUrl: t.text("avatar_url"),
+  image: t.text("image"),
 
 //   links: t.jsonb
 

@@ -1,7 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { Toaster } from "@linktree/ui/toaster";
+// import { Toaster } from "@linktree/ui/toaster";
 import { cn } from "@linktree/ui/cn";
 import { Providers } from "./providers";
 
@@ -38,7 +38,7 @@ export default async function RootLayout({
           <Providers>
             {children}
           </Providers>
-        <Toaster />
+        {/* <Toaster /> */}
       </body>
     </html>
   );
