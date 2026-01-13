@@ -1,6 +1,7 @@
 "use client"
 import * as React from "react"
 import {
+  Blocks,
   Cog,
   Frame,
   Link2,
@@ -27,7 +28,7 @@ const data = {
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
-  sections: [
+  linktree: [
     {
       name: "Dashboard",
       url: "/dashboard",
@@ -45,9 +46,21 @@ const data = {
     },
     {
       name: "Settings",
-      url: "/settings",
+      url: "/settings/profile",
       icon: Cog,
     },
+  ],
+  shortener: [
+    {
+      name: "Overview",
+      url: "/short/overview",
+      icon: Blocks,
+    },
+    {
+      name: "Links",
+      url: "/short/links",
+      icon: Link2,
+    }
   ],
   others: [
     {
@@ -83,7 +96,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavSections
           title="Platform"
-          sections={data.sections} 
+          sections={data.linktree} 
+        />
+        <NavSections
+          title="Shortener"
+          sections={data.shortener} 
         />
         <NavSections
           title="Others"
