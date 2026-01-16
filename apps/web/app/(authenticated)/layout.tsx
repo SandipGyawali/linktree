@@ -10,7 +10,7 @@ export default function BaseLayout({ children }: { children: React.ReactNode }) 
 
       <SidebarInset>
         {/* HEADER */}
-        <header className="flex h-16 shrink-0 items-start flex-row md:items-center justify-between gap-2 px-4">
+        <header className="sticky top-0 z-100 backdrop:blur-3xl flex h-16 shrink-0 items-start flex-row md:items-center justify-between gap-2 px-4">
           <div className="flex shrink-0 items-center gap-2">
             <SidebarTrigger size={"icon-lg"} className="-ml-1" />
           </div>

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from "@nestjs/config";
 import { EmailModule } from './modules/mail/email.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { LinkModule } from './modules/link/link.module';
 
 @Module({
   imports: [
@@ -11,7 +12,8 @@ import { AuthModule } from './modules/auth/auth.module';
       envFilePath: ".env"
     }), 
     EmailModule,
-    AuthModule
+    AuthModule,
+    LinkModule
   ],
 })
 export class AppModule {}

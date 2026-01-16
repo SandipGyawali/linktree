@@ -70,7 +70,8 @@
     "./quantity-input": "./src/components/quantity-input.tsx",
     "./sidebar": "./src/components/sidebar.tsx",
     "./breadcrumb": "./src/components/breadcrumb.tsx",
-    "./input-group": "./src/components/input-group.tsx"
+    "./input-group": "./src/components/input-group.tsx",
+    "./field": "./src/components/field"
   },
   "dependencies": {
     "@hugeicons/core-free-icons": "^3.1.1",

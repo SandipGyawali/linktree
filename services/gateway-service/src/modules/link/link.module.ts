@@ -1,26 +1,24 @@
-import { Global, Module } from "@nestjs/common";
-import { AuthController } from "./auth.controller";
+import { Module } from "@nestjs/common";
 import { ClientsModule, Transport } from "@nestjs/microservices";
 import { ENV } from "config/env";
+import { LinkController } from "./link.controller";
 
-@Global()
 @Module({
   imports: [
     ClientsModule.register([
       {
-        name: "AUTH_SERVICE",
+        name: "LINK_SERVICE",
         transport: Transport.RMQ,
         options: {
           urls: [ENV.AMQP_URI],
-          queue: "auth.transactional.queue",
+          queue: "link.service.queue",
           queueOptions: {
             durable: true,
           },
         }
       }
-    ])
+    ]),
   ],
-  controllers: [AuthController],
-  exports: [ClientsModule]
+  controllers: [LinkController],
 })
-export class AuthModule {}
+export class LinkModule {}
