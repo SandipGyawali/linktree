@@ -2,6 +2,7 @@
  * The Schema Described is for the url-shortener.
  */
 import { createTable } from "../helpers/create-table";
+import { InferSelectModel, InferInsertModel } from "drizzle-orm"
 
 export const linkSchema = createTable("links", (t) => ({
   linkId: t.uuid("link_id").$defaultFn(() => crypto.randomUUID()).primaryKey(),
@@ -25,6 +26,7 @@ export const linkSchema = createTable("links", (t) => ({
   updatedAt: t.timestamp("updated_at").$onUpdateFn(() => new Date()),
 }));
 
+export type LinkSchema = InferSelectModel<typeof linkSchema>;
 
 export const clickSchema = createTable("clicks", (t) => ({
   clickId: t.uuid("click_id").$defaultFn(() => crypto.randomUUID()).primaryKey(),

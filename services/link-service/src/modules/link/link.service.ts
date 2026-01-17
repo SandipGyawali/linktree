@@ -1,4 +1,10 @@
-import { ForbiddenException, Inject, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { 
+  ForbiddenException, 
+  Inject, 
+  Injectable, 
+  InternalServerErrorException, 
+  NotFoundException 
+} from "@nestjs/common";
 import Redis from "ioredis";
 import { IORedisKey } from "src/constants/redis.constants";
 import { LinkCacheService } from "./link.cache.service";
@@ -6,9 +12,9 @@ import { DRIZZLE } from "../../constants/drizzle.constants";
 import type { Database } from "src/drizzle/type";
 import { eq } from "drizzle-orm";
 import { clickSchema, linkSchema } from "src/drizzle/schema";
-import { Request } from "express";
 import { parseUserAgent } from "src/utils/agent_parser";
 import { OnModuleInit } from "@nestjs/common";
+import { LinkSearchService } from "./search/link-search.service";
 
 @Injectable()
 export class LinkService  implements OnModuleInit {
@@ -16,6 +22,7 @@ export class LinkService  implements OnModuleInit {
     @Inject(IORedisKey) private redisClient: Redis,
     private readonly cache: LinkCacheService,
     @Inject(DRIZZLE) private readonly db: Database,
+    private readonly searchService: LinkSearchService
   ) {}
 
   onModuleInit() {
@@ -63,6 +70,16 @@ export class LinkService  implements OnModuleInit {
 
     if(!link)
       throw new InternalServerErrorException("Error while inserting link to database");
+
+    await this.searchService.indexLink({ 
+      ...{
+        linkId: link.linkId,
+        slug: link.slug,
+        userId: link.userId,
+        originalUrl: link.originalUrl,
+        title: link.title,
+      }
+    });
 
     return link;
   }
@@ -115,6 +132,8 @@ export class LinkService  implements OnModuleInit {
       .where(eq(linkSchema.linkId, dto.linkId))
       .returning();
 
+    await this.searchService.updateLink({ ...updated });
+
     if(dto.originalUrl) 
       await this.cache.setSlug(link.slug, dto.originalUrl);
 
@@ -129,6 +148,8 @@ export class LinkService  implements OnModuleInit {
 
     await this.db.delete(linkSchema)
       .where(eq(linkSchema.linkId, linkId));
+
+    await this.searchService.removeLink(linkId);
 
     return { success: true };
   }

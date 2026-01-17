@@ -11,7 +11,9 @@ const envSchema = z.object({
   REDIS_USERNAME: z.string(),
   REDIS_PASSWORD: z.string(),
   REDIS_DATABASE: z.coerce.number(),
-  REDIS_KEY_PREFIX: z.string()
+  REDIS_KEY_PREFIX: z.string(),
+  
+  ELASTICSEARCH_NODE: z.url()
 });
 
 type EnvType = z.infer<typeof envSchema>;

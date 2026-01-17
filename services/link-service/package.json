@@ -22,6 +22,8 @@
     "db:migrate": "bunx --bun drizzle-kit migrate"
   },
   "dependencies": {
+    "@elastic/elasticsearch": "^9.2.0",
+    "@nestjs/elasticsearch": "^11.1.0",
     "@nestjs/schedule": "^6.1.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
