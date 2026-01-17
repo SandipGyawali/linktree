@@ -46,6 +46,10 @@ export class CreateLinkDtoWithUserId {
  * DTO for updating a link
  */
 export class UpdateLinkDto {
+  @IsNotEmpty()
+  @IsString()
+  linkId: string;  
+
   @IsOptional()
   @IsUrl()
   originalUrl?: string;
@@ -74,15 +78,6 @@ export class UpdateLinkDto {
   @IsDateString()
   expiresAt?: Date;
 }
-
-export class UpdateLinkDtoWithId {
-  @IsNotEmpty()
-  @IsString()
-  linkId: string;  
-  
-  dto: UpdateLinkDto
-}
-
 
 /**
  * DTO for resolving a link (microservice payload)

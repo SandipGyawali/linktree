@@ -90,7 +90,7 @@ export class LinkService  implements OnModuleInit {
    * @param dto 
    * @returns 
    */
-  async updateLink(linkId: string, dto: {
+  async updateLink(dto: {
     originalUrl?: string;
     title?: string;
     description?: string;
@@ -98,8 +98,9 @@ export class LinkService  implements OnModuleInit {
     isPreviewEnabled?: boolean;
     isActive?: boolean;
     expiresAt?: Date;
+    linkId: string;
   }) {
-    const link = await this.getLinkById(linkId);
+    const link = await this.getLinkById(dto.linkId);
 
     const [updated] = await this.db.update(linkSchema)
       .set({
@@ -109,9 +110,9 @@ export class LinkService  implements OnModuleInit {
         image: dto.image ?? link.image,
         isPreviewEnabled: dto.isPreviewEnabled ?? link.isPreviewEnabled,
         isActive: dto.isActive ?? link.isActive,
-        expiresAt: dto.expiresAt ?? link.expiresAt,
+        expiresAt: dto.expiresAt ? new Date(dto.expiresAt) : link.expiresAt,
       })
-      .where(eq(linkSchema.linkId, linkId))
+      .where(eq(linkSchema.linkId, dto.linkId))
       .returning();
 
     if(dto.originalUrl) 

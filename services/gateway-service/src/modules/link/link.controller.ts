@@ -1,7 +1,18 @@
-import { Body, Controller, GatewayTimeoutException, Inject, Post, Req, UseGuards } from "@nestjs/common";
+import { 
+  Body, 
+  Controller, 
+  GatewayTimeoutException, 
+  Get, 
+  Inject, 
+  Param, 
+  Post, 
+  Put, 
+  Req, 
+  UseGuards 
+} from "@nestjs/common";
 import { ClientProxy, RpcException } from "@nestjs/microservices";
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { CreateLinkDto, CreateLinkDtoWithUserId } from "./dto/link.dto";
+import { CreateLinkDto, GetLinkByIdDto, GetLinkBySlugDto, UpdateLinkDto } from "./dto/link.dto";
 import { catchError, firstValueFrom, timeout, TimeoutError } from "rxjs";
 import { AuthGuard } from "../auth/guards/auth.guard";
 
@@ -39,5 +50,65 @@ export class LinkController {
     }catch(err) {
       console.error("The error is: ", err)
     }  
+  }
+
+  @Put("link/update")
+  @ApiOperation({ summary: "Update Existing Link API" })
+  @ApiResponse({ status: 201, description: "Link Updated Successfully" })
+  @ApiResponse({ status: 400, description: "Invalid Link Input" })
+  @UseGuards(AuthGuard)
+  @ApiBody({ type: UpdateLinkDto })
+  async updateLink(@Body() body: UpdateLinkDto) {
+    try{
+      const response = await firstValueFrom(
+        this.linkClient.send("link_update", {
+          ...body
+        })
+      );
+      return response;
+    }catch(err){
+      console.error("The error is", err)
+    }
+  }
+
+
+  @Get("link/:linkId")
+  @ApiOperation({ summary: "Get Link By LinkId" })
+  @ApiResponse({ status: 201, description: "Link Data Fetched Successfully" })
+  @ApiResponse({ status: 400, description: "Invalid LinkId" })
+  @UseGuards(AuthGuard)
+  @ApiBody({ type:  GetLinkByIdDto })
+  async getLinkById(@Param() params: GetLinkByIdDto) {
+    console.log(params)
+    try {
+      const response = await firstValueFrom(
+        this.linkClient.send("link_get_by_id", {
+          ...params
+        })
+      )
+      return response;
+    }catch(err) {
+      console.error("The Error is", err);
+    }
+  }
+
+  @Get("link/slug/:slug")
+  @ApiOperation({ summary: "Get Link By LinkId" })
+  @ApiResponse({ status: 201, description: "Link Data Fetched Successfully" })
+  @ApiResponse({ status: 400, description: "Invalid LinkId" })
+  @UseGuards(AuthGuard)
+  @ApiBody({ type:  GetLinkBySlugDto })
+  async getLinkBySlug(@Param() params: GetLinkBySlugDto) {
+    console.log(params)
+    try {
+      const response = await firstValueFrom(
+        this.linkClient.send("link_get_by_slug", {
+          ...params
+        })
+      )
+      return response;
+    }catch(err) {
+      console.error("The Error is", err);
+    }
   }
 }

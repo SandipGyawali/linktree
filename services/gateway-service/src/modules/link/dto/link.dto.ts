@@ -64,6 +64,11 @@ export class CreateLinkDtoWithUserId {
  * DTO for updating a link
  */
 export class UpdateLinkDto {
+  @ApiProperty({ description: "ID of the link to be updated" })
+  @IsNotEmpty()
+  @IsString()
+  linkId: string;  
+
   @ApiPropertyOptional({ description: "Original URL to be updated" })
   @IsOptional()
   @IsUrl()
@@ -98,16 +103,6 @@ export class UpdateLinkDto {
   @IsOptional()
   @IsDateString()
   expiresAt?: Date;
-}
-
-export class UpdateLinkDtoWithId {
-  @ApiProperty({ description: "ID of the link to be updated" })
-  @IsNotEmpty()
-  @IsString()
-  linkId: string;  
-  
-  @ApiProperty({ description: "Link update data" })
-  dto: UpdateLinkDto;
 }
 
 /**

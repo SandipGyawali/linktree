@@ -6,8 +6,8 @@ import {
   CreateLinkDtoWithUserId, 
   GetLinkByIdDto, 
   GetLinkBySlugDto, 
-  ResolveLinkDto, 
-  UpdateLinkDtoWithId 
+  ResolveLinkDto,
+  UpdateLinkDto, 
 } from "./dto/link.dto";
 
 @Controller()
@@ -44,9 +44,8 @@ export class LinkController {
   }
 
   @MessagePattern("link_update")
-  async updateLink(@Payload() payload: UpdateLinkDtoWithId) {
-    const { dto, linkId } = payload;
-    const response = await this.linkService.updateLink(linkId, dto);
+  async updateLink(@Payload() payload: UpdateLinkDto) {
+    const response = await this.linkService.updateLink(payload);
     return response;
   }
 }
