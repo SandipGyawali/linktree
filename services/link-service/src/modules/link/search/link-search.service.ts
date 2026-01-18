@@ -1,15 +1,38 @@
 import { Injectable } from "@nestjs/common";
 import { ElasticsearchService } from "@nestjs/elasticsearch";
-import type { LinkCountResult, LinkSearchBody, LinkSearchResult } from "./link-search.interface";
-import { TransportResult } from "@elastic/elasticsearch";
+import type { LinkSearchBody } from "./link-search.interface";
+import { OnModuleInit } from "@nestjs/common";
 
 @Injectable()
-export class LinkSearchService {
+export class LinkSearchService implements OnModuleInit{
   index = "links";
 
   constructor(
     private readonly elasticSearchService: ElasticsearchService
   ) {}
+
+  async onModuleInit() {
+    this.ensureIndexExists();
+  }
+
+  private async ensureIndexExists() {
+    const exists =  await this.elasticSearchService.indices.exists({ index: "links" });
+
+    if(!exists) {
+      await this.elasticSearchService.indices.create({
+        index: "links",
+        mappings: {
+          properties: {
+            title: { type: "text" },
+            slug: { type: "keyword" },
+            originalUrl: { type: "text" },
+            userId: { type: "keyword" },
+          }
+        }
+      });
+      console.log(`Elasticsearch index "links" created!`)
+    }
+  }
 
   async indexLink(
     doc: LinkSearchBody
@@ -26,19 +49,23 @@ export class LinkSearchService {
     };
   }
 
-  async search(query: string, userId: string) {
+  async search(query: string, userId: string, from = 0, size = 20) {
     const res = await this.elasticSearchService.search({
       index: this.index,
+      from,
+      size, 
       query: {
         bool: {
           must: [
             {
               multi_match: {
                 query,
-                fields: [""]
+                fields: ["title^3", "slug^2", "originalUrl"],
+                fuzziness: "AUTO"
               }
             }
           ],
+          minimum_should_match: 1,
           filter: [{ term: { userId }}]
         }
       },
@@ -46,7 +73,7 @@ export class LinkSearchService {
         _score: {
           order: "desc"
         }
-      }
+      },
     });
 
     return res.hits.hits.map(hit => hit._source!);

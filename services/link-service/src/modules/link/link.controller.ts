@@ -1,5 +1,5 @@
 // link controller - Redirect Controller
-import { Controller } from "@nestjs/common";
+import { Controller, Req } from "@nestjs/common";
 import { LinkService } from "./link.service";
 import { MessagePattern, Payload } from "@nestjs/microservices";
 import { 
@@ -46,6 +46,12 @@ export class LinkController {
   @MessagePattern("link_update")
   async updateLink(@Payload() payload: UpdateLinkDto) {
     const response = await this.linkService.updateLink(payload);
+    return response;
+  }
+
+  @MessagePattern("get_links")
+  async searchLinks(@Payload() payload) {
+    const response = await this.linkService.getLinks({ ...payload });
     return response;
   }
 }

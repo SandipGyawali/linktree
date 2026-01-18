@@ -7,12 +7,13 @@ import {
   Param, 
   Post, 
   Put, 
+  Query, 
   Req, 
   UseGuards 
 } from "@nestjs/common";
 import { ClientProxy, RpcException } from "@nestjs/microservices";
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { CreateLinkDto, GetLinkByIdDto, GetLinkBySlugDto, UpdateLinkDto } from "./dto/link.dto";
+import { CreateLinkDto, GetLinkByIdDto, GetLinkBySlugDto, GetLinkDto, UpdateLinkDto } from "./dto/link.dto";
 import { catchError, firstValueFrom, timeout, TimeoutError } from "rxjs";
 import { AuthGuard } from "../auth/guards/auth.guard";
 
@@ -22,6 +23,26 @@ export class LinkController {
   constructor(
     @Inject("LINK_SERVICE") private readonly linkClient: ClientProxy
   ) {}
+
+
+  @Get("link")
+  @ApiOperation({ summary: "Fetch User Specific Links" })
+  @ApiResponse({ status: 201, description: "Links Fetched Successfully" })
+  @ApiResponse({ status: 400, description: "Invalid Link Input" })
+  @ApiBody({ type: GetLinkDto })
+  @UseGuards(AuthGuard)
+  async getLinks(@Req() req, @Query() dto: GetLinkDto) {
+    console.log(req.user)
+    try {
+      const response = await this.linkClient.send("get_links", { 
+        userId: req.user.sub,
+        ...dto
+      })
+      return response;
+    }catch(err) {
+      console.error("The error is:", err);
+    }
+  }
 
   @Post("link/create")
   @ApiOperation({ summary: "Create a New Link API" })

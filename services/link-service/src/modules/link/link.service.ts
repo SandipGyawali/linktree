@@ -15,6 +15,7 @@ import { clickSchema, linkSchema } from "src/drizzle/schema";
 import { parseUserAgent } from "src/utils/agent_parser";
 import { OnModuleInit } from "@nestjs/common";
 import { LinkSearchService } from "./search/link-search.service";
+import { RpcException } from "@nestjs/microservices";
 
 @Injectable()
 export class LinkService  implements OnModuleInit {
@@ -216,5 +217,33 @@ export class LinkService  implements OnModuleInit {
     }).where(eq(linkSchema.linkId, link.linkId))
 
     return link.originalUrl;
+  }
+
+  /**
+   * Get multiple list from links
+   * @param param0 
+   * @returns 
+   */
+  async getLinks({
+    userId,
+    query,
+    page = 1,
+    limit = 20
+  }: {
+    userId: string;
+    query: string;
+    page: number;
+    limit: number
+  }) {
+    const from = (page - 1) * limit;
+    const links = await this.searchService.search(query, userId, from, limit);
+
+    if(!links)
+      throw new RpcException("Error while getting links");
+
+    return {
+      success: true,
+      links
+    }
   }
 }

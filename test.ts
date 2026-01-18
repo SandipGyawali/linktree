@@ -21,17 +21,16 @@ async function getJwtToken() {
 
 async function createLink() {
   const result = await getJwtToken();
-  console.log(result)
 
   const response = await fetch("http://localhost:3001/api/link/create", {
-    body: JSON.stringify({
-      "originalUrl": "https://example.com/my-portfolio",
-      "slug": "my-portfolio",
-      "title": "My Portfolio",
-      "description": "Personal portfolio showcasing my projects and experience",
-      "image": "https://example.com/images/portfolio-preview.png",
-      "isPreviewEnabled": true,
-      "expiresAt": "2026-12-31T23:59:59.000Z"
+     body: JSON.stringify({
+      originalUrl: "https://example.com/blog-post",
+      slug: "my-blog-post",
+      title: "My Blog Post",
+      description: "A detailed blog post about web development tips and tricks",
+      image: "https://example.com/images/blog-post-preview.png",
+      isPreviewEnabled: true,
+      expiresAt: "2026-06-30T23:59:59.000Z"
     }),
     method: "POST",
     headers: {
@@ -77,15 +76,21 @@ async function createLink() {
 
 async function getLinkById() {
   const result = await getJwtToken();
-  console.log(result)
 
-  const response = await fetch("http://localhost:3001/api/link/slug/my-portfolio", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${result.accessToken}`
+  const query = "M";
+  const page = 1;
+  const limit = 20;
+
+  const response = await fetch(
+    `http://localhost:3001/api/link?query=${encodeURIComponent(query)}&page=${page}&limit=${limit}`,
+    {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${result.accessToken}`,
+      },
     }
-  });
+  );
+
 
   console.log(await response.json());
 }

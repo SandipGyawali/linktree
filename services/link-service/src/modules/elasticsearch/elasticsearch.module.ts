@@ -6,7 +6,9 @@ import { ENV } from "src/config/env";
 @Module({
   imports: [
     _ElasticSearchModule.register({
-      node: ENV.ELASTICSEARCH_NODE || "http://localhost:9200"
+      node: ENV.ELASTICSEARCH_NODE || "http://localhost:9200",
+      maxRetries: 5,
+      sniffOnStart: true,
     })
   ],
   exports: [_ElasticSearchModule]

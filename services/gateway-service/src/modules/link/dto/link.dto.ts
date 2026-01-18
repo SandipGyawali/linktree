@@ -1,13 +1,35 @@
 import { 
   IsBoolean, 
   IsDateString, 
+  IsInt, 
   IsNotEmpty, 
   IsOptional, 
   IsString, 
   IsUrl, 
-  Length 
+  Length, 
+  Min
 } from "class-validator";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+
+
+export class GetLinkDto {
+  @ApiPropertyOptional({ example: "dashboard" })
+  @IsOptional()
+  @IsString()
+  query?: string;
+
+  @ApiPropertyOptional({ example: 1, default: 1 })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  page?: number = 1;
+
+  @ApiPropertyOptional({ example: 20, default: 20 })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  limit?: number = 20;
+}
 
 /**
  * DTO for creating a link
@@ -47,7 +69,7 @@ export class CreateLinkDto {
   @ApiPropertyOptional({ description: "Expiration date for the link" })
   @IsOptional()
   @IsDateString()
-  expiresAt?: Date;
+  expiresAt?: string;
 }
 
 export class CreateLinkDtoWithUserId {
