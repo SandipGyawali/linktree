@@ -3,6 +3,7 @@ import { ConfigModule } from "@nestjs/config";
 import { EmailModule } from './modules/mail/email.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { LinkModule } from './modules/link/link.module';
+import { RpcHelperModule } from './modules/rpc/rpc.module';
 
 @Module({
   imports: [
@@ -13,7 +14,8 @@ import { LinkModule } from './modules/link/link.module';
     }), 
     EmailModule,
     AuthModule,
-    LinkModule
+    LinkModule,
+    RpcHelperModule
   ],
 })
 export class AppModule {}
