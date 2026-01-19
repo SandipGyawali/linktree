@@ -50,22 +50,26 @@ export class LinkSearchService implements OnModuleInit{
   }
 
   async search(query: string, userId: string, from = 0, size = 20) {
+    const must: any[] = [];
+    if(query.trim()) {
+      must.push({
+        multi_match: {
+          query,
+          fields: ["title^3", "slug^2", "originalUrl"],
+          fuzziness: "AUTO",
+        }
+      });
+    }
+
+    console.log(must)
+
     const res = await this.elasticSearchService.search({
       index: this.index,
       from,
       size, 
       query: {
         bool: {
-          must: [
-            {
-              multi_match: {
-                query,
-                fields: ["title^3", "slug^2", "originalUrl"],
-                fuzziness: "AUTO"
-              }
-            }
-          ],
-          minimum_should_match: 1,
+          must,
           filter: [{ term: { userId }}]
         }
       },

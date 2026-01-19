@@ -8,14 +8,10 @@ export class AuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const authHeader = request.headers['authorization'];
-    const refreshToken = request.headers["x-refresh-token"];
+    
+    const accessToken= request.cookies?.access_token;
+    console.log(accessToken)
 
-    if (!authHeader && !refreshToken) {
-      throw new UnauthorizedException('Access token or Refresh Token Missing!');
-    }
-
-    const accessToken = authHeader.split(' ')[1];
     if (!accessToken) {
       throw new UnauthorizedException('Access token missing!');
     }

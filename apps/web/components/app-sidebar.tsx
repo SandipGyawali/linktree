@@ -21,63 +21,67 @@ import Image from "next/image"
 import Link from "next/link"
 import { NavUser } from "./nav-user"
 
-// This is sample data.
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  linktree: [
-    {
-      name: "Dashboard",
-      url: "/dashboard",
-      icon: Frame,
-    },
-    {
-      name: "Links",
-      url: "#",
-      icon: Link2
-    },
-    {
-      name: "Analytics",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Settings",
-      url: "/settings/profile",
-      icon: Cog,
-    },
-  ],
-  shortener: [
-    {
-      name: "Overview",
-      url: "/short/overview",
-      icon: Blocks,
-    },
-    {
-      name: "Links",
-      url: "/short/links",
-      icon: Link2,
-    }
-  ],
-  others: [
-    {
-      name: "Shelf",
-      url: "/shelf",
-      icon: ListCheck
-    },
-    {
-      name: "Feedbacks",
-      url: "/feedback",
-      icon: MailOpen
-    }
-  ]
-}
 
+export function AppSidebar({ user, ...props }: { user: {
+  name: string;
+  email: string;
+  avatar?: string;
+}, props?: React.ComponentProps<typeof Sidebar> }) {
+  // This is sample data.
+  const data = {
+    user: {
+      name: user?.name ?? "",
+      email: user?.email ?? "",
+      avatar: user?.avatar ?? "/avatars/shadcn.jpg",
+    },
+    linktree: [
+      {
+        name: "Dashboard",
+        url: "/dashboard",
+        icon: Frame,
+      },
+      {
+        name: "Links",
+        url: "#",
+        icon: Link2
+      },
+      {
+        name: "Analytics",
+        url: "#",
+        icon: PieChart,
+      },
+      {
+        name: "Settings",
+        url: "/settings/profile",
+        icon: Cog,
+      },
+    ],
+    shortener: [
+      {
+        name: "Overview",
+        url: "/short/overview",
+        icon: Blocks,
+      },
+      {
+        name: "Links",
+        url: "/short/links",
+        icon: Link2,
+      }
+    ],
+    others: [
+      {
+        name: "Shelf",
+        url: "/shelf",
+        icon: ListCheck
+      },
+      {
+        name: "Feedbacks",
+        url: "/feedback",
+        icon: MailOpen
+      }
+    ]
+  }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar 
       collapsible="icon"  variant="floating" {...props}

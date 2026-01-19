@@ -1,12 +1,30 @@
-"use client";
+"use client"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@linktree/ui/sidebar";
 import { AppSidebar } from "../../components/app-sidebar";
 import { ThemeSwitch } from "../../components/theme-switch";
+import { useGetMe } from "../apis/auth/auth.api";
+import { Loader } from "../../components/loader";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function BaseLayout({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  // fetch user information if found then get to the path
+  const me  = useGetMe();
+
+  useEffect(() => {
+    if (me.isError) router.replace("/login");
+  }, [me.isError, router]);
+
+  if (me.isLoading) return <Loader className="h-screen" />;
+  if (me.isError) return null;
+
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar user={{
+        email: me.data?.email,
+        name: me.data?.fullName
+      }} />
 
       <SidebarInset>
         {/* HEADER */}

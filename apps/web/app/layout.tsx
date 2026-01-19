@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 // import { Toaster } from "@linktree/ui/toaster";
 import { cn } from "@linktree/ui/cn";
 import { Providers } from "./providers";
+import { Toaster } from "@linktree/ui/sonner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -30,15 +31,14 @@ export default async function RootLayout({
       lang="en" 
       suppressHydrationWarning
     >
-      <body className={cn(
-            `${geistSans.variable} ${geistMono.variable} font-sans`,
-            "whitespace-pre-line overscroll-none antialiased",
-          )}
-        >
-          <Providers>
-            {children}
-          </Providers>
-        {/* <Toaster /> */}
+      <body className={cn(`${geistSans.variable} ${geistMono.variable} font-sans`,
+          "whitespace-pre-line overscroll-none antialiased",
+        )}
+      >
+        <Providers>
+          {children}
+        </Providers>
+        <Toaster />
       </body>
     </html>
   );

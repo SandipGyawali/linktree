@@ -74,15 +74,32 @@ async function createLink() {
 // }
 
 
-async function getLinkById() {
+// async function getLinkById() {
+//   const result = await getJwtToken();
+
+//   const query = "M";
+//   const page = 1;
+//   const limit = 20;
+
+//   const response = await fetch(
+//     `http://localhost:3001/api/link?query=${encodeURIComponent(query)}&page=${page}&limit=${limit}`,
+//     {
+//       method: "GET",
+//       headers: {
+//         "Authorization": `Bearer ${result.accessToken}`,
+//       },
+//     }
+//   );
+
+
+//   console.log(await response.json());
+// }
+
+async function me() {
   const result = await getJwtToken();
 
-  const query = "M";
-  const page = 1;
-  const limit = 20;
-
   const response = await fetch(
-    `http://localhost:3001/api/link?query=${encodeURIComponent(query)}&page=${page}&limit=${limit}`,
+    `http://localhost:3001/api/auth/me`,
     {
       method: "GET",
       headers: {
@@ -91,14 +108,13 @@ async function getLinkById() {
     }
   );
 
-
   console.log(await response.json());
 }
 
-getLinkById()
+me()
 
 
-
+// xinawol240@ixospace.com
 
 // {
 //   linkId: "9b8a0e3b-b3c3-44c5-b4b9-900f6b3a1110",

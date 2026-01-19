@@ -12,8 +12,7 @@ export class AuthController {
   
   @MessagePattern("user_login")
   async login(@Payload() dto: LoginDto) {
-    console.log(dto);
-    const response = this.authService.login(dto);     
+    const response = await this.authService.login(dto);     
     return response;
   }
 
@@ -22,7 +21,6 @@ export class AuthController {
     const response = this.authService.signup(dto);
     return response;
   }
-
 
   @MessagePattern("validate_access_token")
   async validateAccessToken(@Payload() data) {
@@ -37,6 +35,13 @@ export class AuthController {
     const { refreshToken, accessToken } = data;
     const response = await this.authService.validateRefreshToken({ refreshToken });
     
+    return response;
+  }
+
+
+  @MessagePattern("me")
+  async me(@Payload() dto) {
+    const response = await this.authService.me({ userId: dto.userId })
     return response;
   }
 }

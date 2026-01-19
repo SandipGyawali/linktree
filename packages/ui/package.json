@@ -71,7 +71,8 @@
     "./sidebar": "./src/components/sidebar.tsx",
     "./breadcrumb": "./src/components/breadcrumb.tsx",
     "./input-group": "./src/components/input-group.tsx",
-    "./field": "./src/components/field"
+    "./field": "./src/components/field",
+    "./sonner": "./src/components/sonner"
   },
   "dependencies": {
     "@hugeicons/core-free-icons": "^3.1.1",

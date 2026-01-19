@@ -165,7 +165,10 @@ export class LinkService  implements OnModuleInit {
       offset,
     });
 
-    return links;
+    return {
+      success: true,
+      links
+    };
   }
 
   /**

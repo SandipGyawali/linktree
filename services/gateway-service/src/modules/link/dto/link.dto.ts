@@ -40,12 +40,6 @@ export class CreateLinkDto {
   @IsNotEmpty()
   originalUrl: string;
 
-  @ApiPropertyOptional({ description: "Custom slug for the shortened URL", minLength: 3, maxLength: 20 })
-  @IsOptional()
-  @IsString()
-  @Length(3, 20)
-  slug?: string;
-
   @ApiPropertyOptional({ description: "Title of the link" })
   @IsOptional()
   @IsString()

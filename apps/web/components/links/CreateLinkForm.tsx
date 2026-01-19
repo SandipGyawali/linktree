@@ -1,135 +1,207 @@
+"use client";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@linktree/ui/card"
-import { Input } from "@linktree/ui/input"
-import { Label } from "@linktree/ui/label"
-import { Textarea } from "@linktree/ui/textarea"
-import { Button } from "@linktree/ui/button"
+} from "@linktree/ui/card";
+import { Input } from "@linktree/ui/input";
+import { Textarea } from "@linktree/ui/textarea";
+import { Button } from "@linktree/ui/button";
+import { Switch } from "@linktree/ui/switch";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@linktree/ui/select"
-import { Switch } from "@linktree/ui/switch"
-import { Separator } from "@linktree/ui/separator"
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@linktree/ui/form";
+import { QRPreview } from "../../components/qrcode.preview";
+import { cn } from "@linktree/ui/cn";
+import { CreateLinkFormValues, createLinkSchema } from "../../schema/link.schema";
+import { useAddLink } from "../../app/apis/short/links.api";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner"; 
 
 export function CreateLinkForm() {
+  const router = useRouter();
+  const linkMn = useAddLink();
+  const form = useForm<CreateLinkFormValues>({
+    resolver: zodResolver(createLinkSchema),
+    defaultValues: {
+      title: "",
+      originalUrl: "",
+      image: "",
+      description: "",
+      isPreviewEnabled: true,
+      expiresAt: "",
+    },
+  });
+
+  const { handleSubmit, watch, setValue, control } = form;
+
+  const watchedUrl = watch("originalUrl");
+  const watchedPreview = watch("isPreviewEnabled");
+
+  console.log(form.formState.errors)
+  const onSubmit = (data: CreateLinkFormValues) => {
+    const payload = {
+      title: data.title,
+      originalUrl: data.originalUrl,
+      description: data.description,
+      image: data.image,
+      isPreviewEnabled: data.isPreviewEnabled,
+      expiresAt: data.expiresAt || null,
+    };
+    linkMn.mutate(payload, {
+      onSuccess: () => toast("Successfully Created Link.")
+    });
+    form.reset();
+    router.replace("/short/links")
+  };
+
   return (
-    <Card className="w-full max-w-6xl">
+    <Card className="w-full max-w-5xl">
       <CardHeader>
-        <CardTitle>New link</CardTitle>
+        <CardTitle>New Link</CardTitle>
       </CardHeader>
 
       <CardContent>
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-[1fr_320px]">
-          {/* LEFT COLUMN */}
-          <div className="space-y-6">
-            {/* Destination URL */}
-            <div className="space-y-2">
-              <Label htmlFor="destination">Destination URL</Label>
-              <Input
-                id="destination"
-                placeholder="https://example.com/page"
-              />
-            </div>
-
-            {/* Short link */}
-            <div className="space-y-2">
-              <Label htmlFor="short-link">Short link</Label>
-              <div className="flex gap-2">
-                <Input
-                  disabled
-                  id="short-link"
-                  defaultValue="www.domain.com"
+        <Form {...form}>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-[1fr_320px]">
+              <div className="space-y-6">
+                <FormField
+                  control={control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem className="space-y-2">
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Website title"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-                <Input placeholder="slug" />
-              </div>
-            </div>
 
-            {/* Tags */}
-            <div className="space-y-2">
-              <Label htmlFor="tags">Tags</Label>
-              <Input
-                id="tags"
-                placeholder="marketing, campaign, social"
-              />
-            </div>
+                <FormField
+                  control={control}
+                  name="originalUrl"
+                  render={({ field }) => (
+                    <FormItem className="space-y-2">
+                      <FormLabel>Destination URL</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="https://example.com/page"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            {/* Comments */}
-            <div className="space-y-2">
-              <Label htmlFor="comments">Comments (optional)</Label>
-              <Textarea
-                id="comments"
-                placeholder="Add comments"
-              />
-            </div>
+                <FormField
+                  control={control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem className="space-y-2">
+                      <FormLabel>Description / Tags</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="Add comments" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            {/* Conversion Tracking */}
-            <div className="space-y-2">
-              <Label>Conversion Tracking</Label>
-              <div className="rounded-md border p-4 text-sm text-muted-foreground">
-                Configure conversion tracking after creating the link.
-              </div>
-            </div>
+                <FormField
+                  control={control}
+                  name="expiresAt"
+                  render={({ field }) => (
+                    <FormItem className="space-y-2">
+                      <FormLabel>Expiration Date & Time</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="datetime-local"
+                          placeholder="Select expiration"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <Separator />
+                <FormField
+                  control={control}
+                  name="image"
+                  render={({ field }) => (
+                    <FormItem className="space-y-2">
+                      <FormLabel>Image URL</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="https://example.com/image.png"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            {/* Bottom Actions */}
-            <div className="flex flex-wrap gap-2">
-              <Button variant="outline">UTM</Button>
-              <Button variant="outline">Targeting</Button>
-              <Button variant="outline">A/B Test</Button>
-              <Button variant="outline">Password</Button>
-              <Button variant="outline">Expiration</Button>
-            </div>
-          </div>
-
-          {/* RIGHT COLUMN */}
-          <div className="space-y-6">
-            {/* Folder */}
-            <div className="space-y-2">
-              <Label>Folder</Label>
-              <Select defaultValue="links">
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="links">Links</SelectItem>
-                  <SelectItem value="campaigns">Campaigns</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* QR Code */}
-            <div className="space-y-2">
-              <Label>QR Code</Label>
-              <div className="flex h-40 items-center justify-center rounded-md border bg-muted text-sm text-muted-foreground">
-                QR preview
-              </div>
-            </div>
-
-            {/* Custom Link Preview */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <Label>Custom Link Preview</Label>
-                <Switch />
+                
               </div>
 
-              <div className="flex h-40 items-center justify-center rounded-md border bg-muted text-sm text-muted-foreground">
-                Enter a link to generate a preview
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <FormLabel>QR Code</FormLabel>
+                  <div className={
+                    cn(
+                      "flex h-40 items-center justify-center rounded-md border bg-muted text-sm text-muted-foreground", 
+                      watchedUrl && "h-fit w-fit p-2"
+                    )}
+                  >
+                    {/* {watchedUrl ? "QR for " + watchedUrl : "QR preview"} */}
+                    {watchedUrl ? (
+                      <QRPreview url={watchedUrl} />
+                    ) : (
+                      "QR will appear here after entering a URL"
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <FormLabel>Custom Link Preview</FormLabel>
+                    <Switch
+                      checked={watchedPreview}
+                      onCheckedChange={(val) => setValue("isPreviewEnabled", val)}
+                    />
+                  </div>
+
+                  <div className="flex h-40 items-center justify-center rounded-md border bg-muted text-sm text-muted-foreground">
+                    {watchedPreview
+                      ? `Preview: ${form.getValues("originalUrl")}`
+                      : "Enter a link to generate a preview"}
+                  </div>
+                </div>
+
+                <Button disabled={linkMn.isPending} className="w-full" type="submit">
+                  {linkMn.isPending ? "Creating..." : "Create Link"}
+                </Button>
               </div>
             </div>
-
-            {/* Create button */}
-            <Button className="w-full">Create link</Button>
-          </div>
-        </div>
+          </form>
+        </Form>
       </CardContent>
     </Card>
-  )
+  );
 }

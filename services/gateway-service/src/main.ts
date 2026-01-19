@@ -7,6 +7,7 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { ENV } from 'config/env';
 import { ValidationPipe } from '@nestjs/common';
 import { RpcToHttpExceptionFilter } from './errors/rpc-to-http.exception';
+import cookieParser from "cookie-parser"
 
 async function bootstrap() {
   try {
@@ -16,13 +17,17 @@ async function bootstrap() {
     app.use(helmet());
     app.use(
       cors({
-        origin: '*',
+        origin: [
+          "http://localhost:3000",
+          "http://127.0.0.1:3000",
+        ],
         credentials: true,
       }),
     );
   
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
+    app.use(cookieParser());
 
     app.useGlobalPipes(new ValidationPipe({
       transform: true,
@@ -35,6 +40,7 @@ async function bootstrap() {
     app.useGlobalFilters(new RpcToHttpExceptionFilter())
     app.setGlobalPrefix("api");
     
+
     const options = new DocumentBuilder()
       .setTitle("API Docs")
       .addBearerAuth(

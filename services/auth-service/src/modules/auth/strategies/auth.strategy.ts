@@ -2,7 +2,7 @@ import { HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { adminSchema } from "src/drizzle/schema";
 import { userSchema } from "src/drizzle/schema/user.schema";
 import type { UserType } from "../../../drizzle/helpers/types";
-import { and, eq } from "drizzle-orm";
+import { and, eq, getTableColumns } from "drizzle-orm";
 import { DRIZZLE } from "src/constants/drizzle.constants";
 import type { Database } from "src/drizzle/type";
 import bcrypt from "bcryptjs";
@@ -159,5 +159,30 @@ export class AuthStrategy<T extends UserType> {
       throw new Error("min cannot be greater than max");
     }
     return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+
+  async me(userId: string) {
+    const schema = AuthStrategy.SCHEMA_MAP[this.type];
+
+    const filters = [
+      eq(schema.userId, userId)
+    ];
+    
+    const { hash, ...safeColumns } = getTableColumns(schema);  
+    const [_user] = await this.db
+      .select({ safeColumns })
+      .from(schema)
+      .where(and(...filters))
+      .limit(1);
+
+    if(!_user) 
+       throw new RpcException({
+        message: `User with provided ID not found`,
+        code: "USER_NOT_FOUND",
+        statusCode: HttpStatus.NOT_FOUND
+      });
+    
+    return _user;
   }
 }

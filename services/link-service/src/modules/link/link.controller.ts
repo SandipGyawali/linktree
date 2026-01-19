@@ -49,8 +49,15 @@ export class LinkController {
     return response;
   }
 
+  // @MessagePattern("links")
+  // async links(@Payload() payload) {
+  //   const response = await this.linkService.listUserLinks(payload);
+  //   return response;
+  // }
+
   @MessagePattern("get_links")
   async searchLinks(@Payload() payload) {
+    console.log(payload)
     const response = await this.linkService.getLinks({ ...payload });
     return response;
   }

@@ -63,4 +63,15 @@ export class AuthService {
       return { success: false };
     }
   }
+
+
+
+  async me({ userId }: { userId: string }){
+    try {
+      const payload = await this.userAuthStrategy.me(userId); 
+      return payload;
+    }catch(err) {
+      throw new Error("Error while finding user information")
+    }
+  }
 }
